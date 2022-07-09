@@ -1,0 +1,60 @@
+#importing all libraries that i have use in this notebook
+import pandas as pd
+import numpy as np  
+import matplotlib.pyplot as plt
+%matplotlib inline
+#reading data 
+data="http://bit.ly/w-data"
+s_data = pd.read_csv(data)
+s_data.head(15)
+#shape of data
+s_data.shape
+#check the null values
+s_data.info()
+# Plotting the distribution of scores
+s_data.plot(x='Hours', y='Scores',kind='scatter')
+plt.title('hours vs percentage')
+plt.xlabel('Hours studied')
+plt.ylabel('percentage Score')
+plt.show()
+#dividing the data into inputs and outputs
+X = s_data.iloc[:, :-1].values  
+y = s_data.iloc[:, 1].values
+#dividing the data into training and test sets
+from sklearn.model_selection import train_test_split 
+X_train,X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42) 
+#trainig the Algorithm
+from sklearn.linear_model import LinearRegression  
+m_regression=LinearRegression()
+m_regression.fit(X_train, y_train)
+#intercept represents the coefficient b0
+b0=m_regression.intercept_
+#b1
+b1=m_regression.coef_
+print('slope:',b1)
+# Plotting the regression line
+line =b0+b1*X
+
+# Plotting for the test data
+plt.scatter(X, y)
+plt.plot(X, line);
+plt.title("linear regression line on a scatter plot")
+plt.xlabel("the number of study hours")
+plt.ylabel("scores have been obtained")
+plt.show()
+#testing data in hours
+print(X_test)
+#Predicting the scores
+y_pred = m_regression.predict(X_test)
+# Comparing Actual vs Predicted
+df = pd.DataFrame({'Actual': y_test, 'Predicted': y_pred})  
+df 
+# You can also test with your own data
+hours=[[9.25]]
+own_pred =m_regression.predict(hours)
+print("No of Hours = {}".format(hours))
+print("Predicted Score = {}".format(own_pred[0]))
+#Evaluating the model
+from sklearn import metrics  
+print('Mean Absolute Error:', 
+metrics.mean_absolute_error(y_test, y_pred)) 
